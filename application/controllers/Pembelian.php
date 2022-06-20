@@ -126,6 +126,7 @@ class Pembelian extends CI_Controller
 
                 if ($cekItem > 0) {
                     $this->pembelian->updateQtyKeranjangB($input['qty'], ['idUser' => $idUser, 'kdBarang' => $input['kdBarang']]);
+                    // redirect('pembelian/add');
                 } else {
                     $this->main->insert('keranjangb', $input);
                     redirect('pembelian/add');
@@ -139,10 +140,35 @@ class Pembelian extends CI_Controller
 
     public function delete_item($noItem)
     {
-        $id = encode_php_tags($noItem);
-        $this->main->delete('keranjangb', ['noItem' => $id]);
+        $input = $this->db->get_where('keranjangb', ['noItem' => encode_php_tags($noItem)])->result_array();
+        // $kdbrg = $this->db->get_where('keranjang')
+        $data = [
+            'noItem' => $input[0]['noItem'],
+            'kdBarang' => $input[0]['kdBarang'],
+            'idUser' => $input[0]['idUser'],
+            'qty' => $input[0]['qty'],
+        ];
+        // echo '<pre>';
+        // print_r($data);
+        // die;
+        // echo '</pre>';
+        $true = $this->db->insert('keranjangb_reset', $data);
+        if ($true) {
+            $this->db->where('noItem', $input[0]['noItem']);
+            $true1 =  $this->db->delete('keranjangb');
+            if ($true1) {
+                $this->db->where('noItem', $input[0]['noItem']);
+                $this->db->delete('keranjangb_reset');
+            } else {
+                redirect('pembelian/add');
+            }
+            redirect('pembelian/add');
+        } else {
+            redirect('pembelian/add');
+        }
 
-        redirect('pembelian/add');
+        // $id = encode_php_tags($noItem);
+        // $this->main->delete('keranjangb', ['noItem' => $id]);
     }
 
     public function cetak_detail($getId)

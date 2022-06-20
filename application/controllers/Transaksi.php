@@ -132,6 +132,7 @@ class Transaksi extends CI_Controller
 
                 if ($cekItem > 0) {
                     $this->transaksi->updateQtyKeranjang($input['qty'], ['idUser' => $idUser, 'kdBarang' => $input['kdBarang']]);
+                    // redirect('transaksi/add');
                 } else {
                     $this->main->insert('keranjang', $input);
                     redirect('transaksi/add');
@@ -145,10 +146,35 @@ class Transaksi extends CI_Controller
 
     public function delete_item($noItem)
     {
-        $id = encode_php_tags($noItem);
-        $this->main->delete('keranjang', ['noItem' => $id]);
+        $input = $this->db->get_where('keranjang', ['noItem' => encode_php_tags($noItem)])->result_array();
+        // $kdbrg = $this->db->get_where('keranjang')
+        $data = [
+            'noItem' => $input[0]['noItem'],
+            'kdBarang' => $input[0]['kdBarang'],
+            'idUser' => $input[0]['idUser'],
+            'qty' => $input[0]['qty'],
+        ];
+        // echo '<pre>';
+        // print_r($data);
+        // die;
+        // echo '</pre>';
+        $true = $this->db->insert('keranjang_reset', $data);
+        if ($true) {
+            $this->db->where('noItem', $input[0]['noItem']);
+            $true1 =  $this->db->delete('keranjang');
+            if ($true1) {
+                $this->db->where('noItem', $input[0]['noItem']);
+                $this->db->delete('keranjang_reset');
+            } else {
+                redirect('transaksi/add');
+            }
+            redirect('transaksi/add');
+        } else {
+            redirect('transaksi/add');
+        }
 
-        redirect('transaksi/add');
+        // $id = encode_php_tags($noItem);
+        // $this->main->delete('keranjang', ['noItem' => $id]);
     }
 
     public function cetak_detail($getId)
