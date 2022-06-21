@@ -125,8 +125,14 @@ class Pembelian extends CI_Controller
                 $cekItem = $this->pembelian->cekItem(['idUser' => $idUser, 'kdBarang' => $input['kdBarang']]);
 
                 if ($cekItem > 0) {
-                    $this->pembelian->updateQtyKeranjangB($input['qty'], ['idUser' => $idUser, 'kdBarang' => $input['kdBarang']]);
-                    // redirect('pembelian/add');
+                    // $this->pembelian->updateQtyKeranjangB($input['qty'], ['idUser' => $idUser, 'kdBarang' => $input['kdBarang']]);
+                    $this->session->set_flashdata('message', '<div class="alert alert-warning" role="alert">
+                    Data ini sudah dikeranjang, mohon lakukan update jika ada perubahan, atau hapus !
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>');
+                    redirect('pembelian/add');
                 } else {
                     $this->main->insert('keranjangb', $input);
                     redirect('pembelian/add');
@@ -244,5 +250,156 @@ class Pembelian extends CI_Controller
         $this->db->from('pembelian');
         $query = $this->db->get();
         return $query->row()->totalHargaBeli;
+    }
+
+
+
+
+
+
+
+
+    public function update_jumbel()
+    {
+        $noItem = $this->input->post('noItem');
+        $kdBarang = $this->input->post('kdBarang');
+        $jum1 = $this->input->post('jum1');
+        $jum2 = $this->input->post('jum2');
+
+        $this->form_validation->set_rules('jum2', 'Jumlah Beli', 'required|numeric');
+
+        $data['title'] = "Pembelian";
+        $idUser = userdata()->idUser;
+        $data['keranjangb'] = $this->pembelian->getKeranjangB(['idUser' => $idUser]);
+        $data['total_harga_beli'] = $this->pembelian->getTotalKeranjangB(['idUser' => $idUser]);
+
+
+        if ($this->form_validation->run() == false) {
+            template_view('pembelian/keranjang', $data);
+        } else {
+            if ($jum1 > $jum2) {
+                $res = $jum1 - $jum2;
+                // echo '<pre>';
+                // print_r($res . ' ini ke 1');
+                // die;
+                // echo '<pre>';
+                $data_k = [
+                    'qty' => $jum2,
+                ];
+                $data_res = [
+                    'noItem' => $noItem,
+                    'kdBarang' => $kdBarang,
+                    'idUser' => $idUser,
+                    'qty' => $res,
+                ];
+                $this->db->where('noItem', $noItem);
+                $true = $this->db->update('keranjangb', $data_k);
+                if ($true) {
+                    $true1 = $this->db->insert('beli_update_plus', $data_res);
+                    if ($true1) {
+                        $this->db->where('noItem', $noItem);
+                        $true2 = $this->db->delete('beli_update_plus');
+                        if ($true2) {
+                            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+                            Jumlah Beli sukses diperbarui
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>');
+                            redirect('pembelian/add');
+                        } else {
+                            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                            Gagal delete di update plus
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>');
+                            redirect('pembelian/add');
+                        }
+                    } else {
+                        $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                        Gagal masuk di Update Plus
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>');
+                        redirect('pembelian/add');
+                    }
+                } else {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                    Gagal terupdate dikeranjang
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>');
+                    redirect('pembelian/add');
+                }
+            } elseif ($jum1 < $jum2) {
+                $res = ($jum1 - $jum2) * -1;
+                // echo '<pre>';
+                // print_r($res . ' ini ke 2');
+                // die;
+                // echo '<pre>';
+                $data_k = [
+                    'qty' => $jum2,
+                ];
+                $data_res = [
+                    'noItem' => $noItem,
+                    'kdBarang' => $kdBarang,
+                    'idUser' => $idUser,
+                    'qty' => $res,
+                ];
+                $this->db->where('noItem', $noItem);
+                $true = $this->db->update('keranjangb', $data_k);
+                if ($true) {
+                    $true1 = $this->db->insert('beli_update_minus', $data_res);
+                    if ($true1) {
+                        $this->db->where('noItem', $noItem);
+                        $true2 = $this->db->delete('beli_update_minus');
+                        if ($true2) {
+                            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">
+                            Jumlah Beli sukses diperbarui
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>');
+                            redirect('pembelian/add');
+                        } else {
+                            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                            Gagal delete di update plus
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>');
+                            redirect('pembelian/add');
+                        }
+                    } else {
+                        $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                        Gagal masuk di Update Plus
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>');
+                        redirect('pembelian/add');
+                    }
+                } else {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                    Gagal terupdate dikeranjang
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>');
+                    redirect('pembelian/add');
+                }
+            } else {
+                $this->session->set_flashdata('message', '<div class="alert alert-warning" role="alert">
+                Tidak ada perubahan Jumlah Beli
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>');
+                redirect('pembelian/add');
+            }
+        }
     }
 }

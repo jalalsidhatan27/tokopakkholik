@@ -25,9 +25,11 @@ class Barang_owner extends CI_Controller
 
     private function _validasi()
     {
+        // $this->form_validation->set_rules('kdBarang', 'Kode Barang', 'required|trim');
         $this->form_validation->set_rules('namaBarang', 'Nama Barang', 'required|trim');
         $this->form_validation->set_rules('idKategori', 'Kategori', 'required');
         $this->form_validation->set_rules('stok', 'Stok', 'required|numeric|trim');
+        $this->form_validation->set_rules('hargaBeli', 'Harga Beli', 'required|numeric|trim');
         $this->form_validation->set_rules('harga', 'harga', 'required|numeric|trim');
     }
 

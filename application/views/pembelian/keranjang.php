@@ -8,15 +8,19 @@
                         <span class="text-muted small">Daftar Barang</span>
                     </div>
                     <div class="col-sm text-right">
-                        <a href="<?= base_url('pembelian/add_item') ?>" class="btn btn-primary"><i
-                                class="fa fa-plus"></i> Tambah</a>
-                        <a onclick="return confirm('Data pemesanan akan dihapus. anda yakin ingin batal?')"
-                            href="<?= base_url('pembelian') ?>" class="btn btn-danger"><i class="fa fa-times"></i>
+                        <a href="<?= base_url('pembelian/add_item') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Tambah</a>
+                        <a onclick="return confirm('Data pemesanan akan dihapus. anda yakin ingin batal?')" href="<?= base_url('pembelian') ?>" class="btn btn-danger"><i class="fa fa-times"></i>
                             Batal</a>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover mt-3 mb-0">
+                        <?php if (validation_errors()) : ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?= validation_errors(); ?>
+                            </div>
+                        <?php endif; ?>
+                        <?= $this->session->flashdata('message') ?>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -25,34 +29,38 @@
                                 <th>Harga Satuan</th>
                                 <th>Subtotal</th>
                                 <th>Hapus</th>
+                                <th>Edit</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             if (!$keranjangb) : ?>
-                            <tr>
-                                <td class="text-center" colspan="6">
-                                    Tidak ada barang dikeranjang
-                                </td>
-                            </tr>
-                            <?php
+                                <tr>
+                                    <td class="text-center" colspan="6">
+                                        Tidak ada barang dikeranjang
+                                    </td>
+                                </tr>
+                                <?php
                             else :
                                 $no = 1;
                                 foreach ($keranjangb as $row) : ?>
-                            <tr>
-                                <td><?= $no++; ?>.</td>
-                                <td><?= $row->namaBarang; ?></td>
-                                <td><?= $row->qty; ?></td>
-                                <td><?= format_uang($row->hargaBeli) ?></td>
-                                <td><?= format_uang($row->hargaBeli * $row->qty) ?></td>
-                                <td>
-                                    <a onclick="return confirm('Yakin ingin hapus?');"
-                                        href="<?= base_url('pembelian/delete_item/' . $row->noItem) ?>"
-                                        class="badge badge-danger py-2 px-3">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                                    <tr>
+                                        <td><?= $no++; ?>.</td>
+                                        <td><?= $row->namaBarang; ?></td>
+                                        <td><?= $row->qty; ?></td>
+                                        <td><?= format_uang($row->hargaBeli) ?></td>
+                                        <td><?= format_uang($row->hargaBeli * $row->qty) ?></td>
+                                        <td>
+                                            <a onclick="return confirm('Yakin ingin hapus?');" href="<?= base_url('pembelian/delete_item/' . $row->noItem) ?>" class="badge badge-danger py-2 px-3">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="#edit<?= $row->noItem ?>" class="badge badge-warning py-2 px-3" role="badge" data-id="<?= $row->noItem; ?>" data-toggle="modal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                             <?php endforeach;
                             endif; ?>
                         </tbody>
@@ -61,6 +69,47 @@
                 <hr>
             </div>
         </div>
+        <?php foreach ($keranjangb as $row) : ?>
+            <div class="modal fade" id="edit<?= $row->noItem; ?>">
+                <div class="modal-dialog modal-dialog-centered modal-xs">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary">
+                            <h4 class="modal-title">Jumlah Beli</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="<?= base_url('Pembelian/update_jumbel'); ?>" method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="form-group" style="display: none;">
+                                    <label for="Jumlah Beli">Jumlah Beli</label>
+                                    <input type="text" class="form-control" name="noItem" value="<?= $row->noItem; ?>">
+                                    <input type="text" class="form-control" name="kdBarang" value="<?= $row->kdBarang; ?>">
+                                    <input type="text" class="form-control" name="jum1" value="<?= $row->qty; ?>">
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="number" class="form-control" name="jum2" value="<?= $row->qty; ?>">
+                                    </div>
+                                    <div class="col-lg-4">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="submit" class="btn bg-primary">Update</button>
+                                <button type="button" class="btn bg-danger" data-dismiss="modal">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        <?php endforeach; ?>
     </div>
     <div class="col-md-3">
         <div class="card">
@@ -111,8 +160,7 @@
 
                 <div class="form-group">
                     <label for="konfirmasi">Confirm</label>
-                    <input type="text" name="konfirmasi" value="<?= set_value('konfirmasi') ?>" class="form-control"
-                        placeholder="Confirm...">
+                    <input type="text" name="konfirmasi" value="<?= set_value('konfirmasi') ?>" class="form-control" placeholder="Confirm...">
                 </div>
 
                 <?= $this->session->flashdata('msg'); ?>
@@ -123,10 +171,8 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">Rp.</div>
                         </div>
-                        <input type="hidden" name="totalHargaBeli" id="totalHargaBeli"
-                            value="<?= $total_harga_beli; ?>">
-                        <input type="text" class="form-control" readonly
-                            value="<?= format_uang($total_harga_beli, false); ?>">
+                        <input type="hidden" name="totalHargaBeli" id="totalHargaBeli" value="<?= $total_harga_beli; ?>">
+                        <input type="text" class="form-control" readonly value="<?= format_uang($total_harga_beli, false); ?>">
                     </div>
                 </div>
                 <!-- <div class="form-group">
@@ -161,19 +207,19 @@
 </div>
 
 <script>
-$(function() {
-    $('body').on('keyup', '#uangBayar', function() {
-        let total = $('#totalHargaBeli').val();
-        let uang = $(this).val();
+    $(function() {
+        $('body').on('keyup', '#uangBayar', function() {
+            let total = $('#totalHargaBeli').val();
+            let uang = $(this).val();
 
-        $('#kembalian').val(uang - total);
+            $('#kembalian').val(uang - total);
+        });
     });
-});
 
-$('.select_nm_pel').change(function() {
-    var alamatPelanggan = $('option:selected', this).attr('data-alamat');
-    var noTelp = $('option:selected', this).attr('data-telp');
-    $('#alamat_pel').val(alamatPelanggan);
-    $('#no_telp_pel').val(noTelp);
-});
+    $('.select_nm_pel').change(function() {
+        var alamatPelanggan = $('option:selected', this).attr('data-alamat');
+        var noTelp = $('option:selected', this).attr('data-telp');
+        $('#alamat_pel').val(alamatPelanggan);
+        $('#no_telp_pel').val(noTelp);
+    });
 </script>
