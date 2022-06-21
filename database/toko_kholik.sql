@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 20 Jun 2022 pada 10.53
+-- Waktu pembuatan: 21 Jun 2022 pada 18.09
 -- Versi server: 10.4.11-MariaDB
 -- Versi PHP: 7.3.13
 
@@ -43,7 +43,101 @@ CREATE TABLE `barang` (
 
 INSERT INTO `barang` (`kdBarang`, `idKategori`, `namaBarang`, `hargaBeli`, `harga`, `stok`) VALUES
 ('B2200004', 9, 'PULPEN PILOT', 2000, 3500, 250),
-('B2200005', 10, 'gayung', 5000, 8000, 30);
+('B2200005', 10, 'gayung', 5000, 8000, 40),
+('B2200006', 13, 'Softex A', 4000, 15000, 50),
+('B2200008', 11, 'Emeron1', 10000, 25000, 25);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `beli_update_minus`
+--
+
+CREATE TABLE `beli_update_minus` (
+  `noItem` int(11) NOT NULL,
+  `kdBarang` char(10) NOT NULL,
+  `idUser` char(4) NOT NULL,
+  `qty` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Trigger `beli_update_minus`
+--
+DELIMITER $$
+CREATE TRIGGER `bupdate_minus` AFTER INSERT ON `beli_update_minus` FOR EACH ROW BEGIN
+UPDATE barang SET stok = stok + NEW.qty WHERE kdBarang = NEW.kdBarang;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `beli_update_plus`
+--
+
+CREATE TABLE `beli_update_plus` (
+  `noItem` int(11) NOT NULL,
+  `kdBarang` char(10) NOT NULL,
+  `idUser` char(4) NOT NULL,
+  `qty` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Trigger `beli_update_plus`
+--
+DELIMITER $$
+CREATE TRIGGER `bupdate_plus` AFTER INSERT ON `beli_update_plus` FOR EACH ROW BEGIN
+UPDATE barang SET stok = stok - NEW.qty WHERE kdBarang = NEW.kdBarang;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `jual_update_minus`
+--
+
+CREATE TABLE `jual_update_minus` (
+  `noItem` int(11) NOT NULL,
+  `kdBarang` char(10) NOT NULL,
+  `idUser` char(4) NOT NULL,
+  `qty` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Trigger `jual_update_minus`
+--
+DELIMITER $$
+CREATE TRIGGER `jupdate_minus` AFTER INSERT ON `jual_update_minus` FOR EACH ROW BEGIN
+UPDATE barang SET stok = stok - NEW.qty WHERE kdBarang = NEW.kdBarang;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `jual_update_plus`
+--
+
+CREATE TABLE `jual_update_plus` (
+  `noItem` int(11) NOT NULL,
+  `kdBarang` char(10) NOT NULL,
+  `idUser` char(4) NOT NULL,
+  `qty` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Trigger `jual_update_plus`
+--
+DELIMITER $$
+CREATE TRIGGER `jupdate_plus` AFTER INSERT ON `jual_update_plus` FOR EACH ROW BEGIN
+UPDATE barang SET stok = stok + NEW.qty WHERE kdBarang = NEW.kdBarang;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -80,7 +174,11 @@ INSERT INTO `jurnal_umum` (`no`, `tanggal`, `nama_perkiraan`, `debet`, `kredit`,
 (17, '2022-06-20', 'Kas', 32080000, 0, 'Penjualan'),
 (18, '2022-06-20', 'Penjualan', 0, 32080000, ''),
 (19, '2022-06-20', 'Pembelian', 8000, 0, 'Tunai'),
-(20, '2022-06-20', 'Kas', 0, 8000, 'Pembelian');
+(20, '2022-06-20', 'Kas', 0, 8000, 'Pembelian'),
+(21, '2022-06-21', 'Kas', 80000, 0, 'Penjualan'),
+(22, '2022-06-21', 'Penjualan', 0, 80000, ''),
+(23, '2022-06-21', 'Pembelian', 4000, 0, 'Tunai'),
+(24, '2022-06-21', 'Kas', 0, 4000, 'Pembelian');
 
 -- --------------------------------------------------------
 
@@ -101,7 +199,8 @@ INSERT INTO `kategori` (`idKategori`, `namaKategori`) VALUES
 (9, 'ROKOK'),
 (10, 'SABUN'),
 (11, 'SHAMPO'),
-(12, 'ALAT TULIS');
+(12, 'ALAT TULIS'),
+(13, 'Kebutuhan Wanita');
 
 -- --------------------------------------------------------
 
@@ -243,7 +342,8 @@ INSERT INTO `pembelian` (`idPembelian`, `tanggal`, `idUser`, `totalHargaBeli`, `
 ('P220613001', '2022-06-13', 'U004', 100000, 'Y'),
 ('P220613002', '2022-06-13', 'U004', 20000, 'Y'),
 ('P220613003', '2022-06-13', 'U004', 20000, 'Y'),
-('P220620002', '2022-06-20', 'U004', 25000, 'Y');
+('P220620002', '2022-06-20', 'U004', 25000, 'Y'),
+('P220621001', '2022-06-21', 'U004', 50000, 'Y');
 
 -- --------------------------------------------------------
 
@@ -299,7 +399,8 @@ INSERT INTO `pembelian_detail` (`idPembelian`, `kdBarang`, `qty`, `subtotal`) VA
 ('P220613002', 'B2200004', 10, 20000),
 ('P220613003', 'B2200004', 10, 20000),
 ('P220620001', 'B2200005', 5, 25000),
-('P220620002', 'B2200005', 5, 25000);
+('P220620002', 'B2200005', 5, 25000),
+('P220621001', 'B2200005', 10, 50000);
 
 -- --------------------------------------------------------
 
@@ -407,9 +508,7 @@ INSERT INTO `transaksi` (`idTransaksi`, `tanggal`, `idUser`, `namaPelanggan`, `a
 ('T220612006', '2022-06-12', 'U004', 'Jalal', '12', '12', 7000, 7000, 3000, 0),
 ('T220613001', '2022-06-13', 'U004', 'Jalal', 'rer', 'e', 7000, 7000, 3000, 0),
 ('T220613002', '2022-06-13', 'U004', '123', '13', '13', 70000, 70000, 30000, 0),
-('T220620001', '2022-06-20', 'U004', 'andre', 'asdas', '08934243', 16000, 20000, 6000, 4000),
-('T220620002', '2022-06-20', 'U004', 'dina', 'asldkajs', '08934243', 24000, 25000, 9000, 1000),
-('T220620003', '2022-06-20', 'U004', 'miftah', 'sadasdas', '08934243', 40000, 50000, 15000, 10000);
+('T220621001', '2022-06-21', 'U004', 'Gunawan', 'sadasda', '08934243', 80000, 100000, 30000, 20000);
 
 -- --------------------------------------------------------
 
@@ -444,9 +543,7 @@ INSERT INTO `transaksi_detail` (`idTransaksi`, `kdBarang`, `qty`, `subtotal`, `u
 ('T220612006', 'B2200004', 2, 7000, 3000),
 ('T220613001', 'B2200004', 2, 7000, 3000),
 ('T220613002', 'B2200004', 20, 70000, 30000),
-('T220620001', 'B2200005', 2, 16000, 6000),
-('T220620002', 'B2200005', 3, 24000, 9000),
-('T220620003', 'B2200005', 5, 40000, 15000);
+('T220621001', 'B2200005', 10, 80000, 30000);
 
 -- --------------------------------------------------------
 
@@ -482,6 +579,34 @@ INSERT INTO `user` (`idUser`, `username`, `password`, `level`, `nama`, `noTelp`,
 ALTER TABLE `barang`
   ADD PRIMARY KEY (`kdBarang`),
   ADD KEY `idKategori` (`idKategori`);
+
+--
+-- Indeks untuk tabel `beli_update_minus`
+--
+ALTER TABLE `beli_update_minus`
+  ADD PRIMARY KEY (`noItem`),
+  ADD KEY `kdBarang` (`kdBarang`);
+
+--
+-- Indeks untuk tabel `beli_update_plus`
+--
+ALTER TABLE `beli_update_plus`
+  ADD PRIMARY KEY (`noItem`),
+  ADD KEY `kdBarang` (`kdBarang`);
+
+--
+-- Indeks untuk tabel `jual_update_minus`
+--
+ALTER TABLE `jual_update_minus`
+  ADD PRIMARY KEY (`noItem`),
+  ADD KEY `kdBarang` (`kdBarang`);
+
+--
+-- Indeks untuk tabel `jual_update_plus`
+--
+ALTER TABLE `jual_update_plus`
+  ADD PRIMARY KEY (`noItem`),
+  ADD KEY `kdBarang` (`kdBarang`);
 
 --
 -- Indeks untuk tabel `jurnal_umum`
@@ -582,13 +707,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `jurnal_umum`
 --
 ALTER TABLE `jurnal_umum`
-  MODIFY `no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `no` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT untuk tabel `kategori`
 --
 ALTER TABLE `kategori`
-  MODIFY `idKategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `idKategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT untuk tabel `pelanggan`
