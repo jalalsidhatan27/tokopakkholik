@@ -97,6 +97,8 @@ class Transaksi extends CI_Controller
                 $this->main->insert_batch('transaksi_detail', $data_detail);
                 // bersihkan keranjang
                 $this->main->delete('keranjang', ['idUser' => $idUser]);
+
+                // save to jurnal umum
                 $this->save_ju();
 
                 msgBox('save');
@@ -242,40 +244,40 @@ class Transaksi extends CI_Controller
         //hapus PERSEDIAAN AKHIR jika sudah terinput
         $this->del_pers_akhir();
 
-        $where    = date('Y-m-d');
-        $cek     = $this->transaksi->cek_ju($where, 'jurnal_umum')->num_rows();
-        if ($cek == 0) {
-            $ju     = array(
-                'tanggal'         =>    date('Y-m-d'),
-                'nama_perkiraan' =>     'Kas',
-                'debet'         =>    str_replace('.', '', $this->input->post('totalHarga', TRUE)),
-                'kredit'        =>    0,
-                'keterangan'     =>     'Penjualan'
-            );
-            $this->db->insert('jurnal_umum', $ju);
+        // $where    = date('Y-m-d');
+        // $cek     = $this->transaksi->cek_ju($where, 'jurnal_umum')->num_rows();
+        // if ($cek == 0) {
+        $ju     = array(
+            'tanggal'         =>    date('Y-m-d'),
+            'nama_perkiraan' =>     'Kas',
+            'debet'         =>    str_replace('.', '', $this->input->post('totalHarga', TRUE)),
+            'kredit'        =>    0,
+            'keterangan'     =>     'Penjualan'
+        );
+        $this->db->insert('jurnal_umum', $ju);
 
-            $ju = array(
-                'tanggal'         =>    date('Y-m-d'),
-                'nama_perkiraan' =>     'Penjualan',
-                'kredit'         =>    str_replace('.', '', $this->input->post('totalHarga', TRUE)),
-                'debet'            =>    0,
-            );
-            $this->db->insert('jurnal_umum', $ju);
-        } else {
-            //UPDATE FOR KAS DEBET
-            $where = array(
-                'keterangan'     => 'Penjualan',
-                'nama_perkiraan' => 'Kas'
-            );
-            $this->db->set('debet', 'debet+' . str_replace('.', '', $this->input->post('totalHarga', TRUE)), FALSE);
-            $this->db->where($where);
-            $this->db->update('jurnal_umum');
+        $ju = array(
+            'tanggal'         =>    date('Y-m-d'),
+            'nama_perkiraan' =>     'Penjualan',
+            'kredit'         =>    str_replace('.', '', $this->input->post('totalHarga', TRUE)),
+            'debet'            =>    0,
+        );
+        $this->db->insert('jurnal_umum', $ju);
+        // } else {
+        //     //UPDATE FOR KAS DEBET
+        //     $where = array(
+        //         'keterangan'     => 'Penjualan',
+        //         'nama_perkiraan' => 'Kas'
+        //     );
+        //     $this->db->set('debet', 'debet+' . str_replace('.', '', $this->input->post('totalHarga', TRUE)), FALSE);
+        //     $this->db->where($where);
+        //     $this->db->update('jurnal_umum');
 
-            //UPDATE FOR PENJUALAN KREDIT
-            $this->db->set('kredit', 'kredit+' . str_replace('.', '', $this->input->post('totalHarga', TRUE)), FALSE);
-            $this->db->where('nama_perkiraan', 'Penjualan');
-            $this->db->update('jurnal_umum');
-        }
+        //     //UPDATE FOR PENJUALAN KREDIT
+        //     $this->db->set('kredit', 'kredit+' . str_replace('.', '', $this->input->post('totalHarga', TRUE)), FALSE);
+        //     $this->db->where('nama_perkiraan', 'Penjualan');
+        //     $this->db->update('jurnal_umum');
+        // }
     }
 
 

@@ -82,6 +82,8 @@ class Pembelian extends CI_Controller
                 $data_detail[$i]['kdBarang']    = $kb->kdBarang;
                 $data_detail[$i]['qty']         = $kb->qty;
                 $data_detail[$i]['subtotal']    = $kb->hargaBeli * $kb->qty;
+                // save to jurnal umum
+                $this->save_ju_tunai($kb->hargaBeli * $kb->qty);
                 $i++;
             }
 
@@ -92,7 +94,8 @@ class Pembelian extends CI_Controller
             $this->main->insert_batch('pembelian_detail', $data_detail);
             // bersihkan keranjang b
             $this->main->delete('keranjangb', ['idUser' => $idUser]);
-            $this->save_ju_tunai();
+
+
             msgBox('save');
             redirect('pembelian/detail/' . $idPembelian);
             // } else {
@@ -203,45 +206,46 @@ class Pembelian extends CI_Controller
     }
 
 
-    public function save_ju_tunai()
+    public function save_ju_tunai($get_total = 0)
     {
         // $where    = date('Y-m-d');
         $where    = date('Y-m-d');
-        $cek     = $this->pembelian->cek_ju($where, 'jurnal_umum')->num_rows();
-        if ($cek == 0) {
-            $ju     = array(
-                'tanggal'         =>    date('Y-m-d'),
-                'nama_perkiraan' =>     'Pembelian',
-                'debet'         =>    $this->get_total(),
-                'kredit'        =>    0,
-                'keterangan'    => 'Tunai'
-            );
-            $this->db->insert('jurnal_umum', $ju);
+        // $cek     = $this->pembelian->cek_ju($where, 'jurnal_umum')->num_rows();
+        // if ($cek == 0) {
+        $ju     = array(
+            'tanggal'         =>    date('Y-m-d'),
+            'nama_perkiraan' =>     'Pembelian',
+            'debet'         =>    $get_total,
+            'kredit'        =>    0,
+            'keterangan'    => 'Tunai'
+        );
+        $this->db->insert('jurnal_umum', $ju);
 
-            $ju = array(
-                'tanggal'         =>    date('Y-m-d'),
-                'nama_perkiraan' =>     'Kas',
-                'kredit'         =>    $this->get_total(),
-                'debet'            =>    0,
-                'keterangan'     =>     'Pembelian'
-            );
-            $this->db->insert('jurnal_umum', $ju);
-        } else {
-            //UPDATE FOR KAS KREDIT
-            $where = array(
-                'keterangan'     => 'Pembelian',
-                'nama_perkiraan' => 'Kas'
-            );
-            $this->db->set('kredit', 'kredit+' . $this->get_total(), FALSE);
-            $this->db->where($where);
-            $this->db->update('jurnal_umum');
+        $ju = array(
+            'tanggal'         =>    date('Y-m-d'),
+            'nama_perkiraan' =>     'Kas',
+            'kredit'         =>    $get_total,
+            'debet'            =>    0,
+            'keterangan'     =>     'Pembelian'
+        );
+        $this->db->insert('jurnal_umum', $ju);
+        // }
+        // else {
+        //     //UPDATE FOR KAS KREDIT
+        //     $where = array(
+        //         'keterangan'     => 'Pembelian',
+        //         'nama_perkiraan' => 'Kas'
+        //     );
+        //     $this->db->set('kredit', 'kredit+' . $this->get_total(), FALSE);
+        //     $this->db->where($where);
+        //     $this->db->update('jurnal_umum');
 
-            //UPDATE FOR PEMBELIAN DEBET
-            $this->db->set('debet', 'debet+' . $this->get_total(), FALSE);
-            $this->db->where('nama_perkiraan', 'Pembelian');
-            $this->db->where('keterangan', 'Tunai');
-            $this->db->update('jurnal_umum');
-        }
+        //     //UPDATE FOR PEMBELIAN DEBET
+        //     $this->db->set('debet', 'debet+' . $this->get_total(), FALSE);
+        //     $this->db->where('nama_perkiraan', 'Pembelian');
+        //     $this->db->where('keterangan', 'Tunai');
+        //     $this->db->update('jurnal_umum');
+        // }
     }
 
     public function get_total()

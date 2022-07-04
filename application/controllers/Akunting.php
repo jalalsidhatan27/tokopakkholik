@@ -411,6 +411,9 @@ class Akunting extends CI_Controller
                 'get_labarugi'    => $this->m_akunting->get_all_labarugi_fil($bln, $thn, 'jurnal_umum')->result(),
                 'title'        => "Laporan Laba rugi",
             );
+
+            print_r($data);
+            die;
             template_view('akunting/lap_laba_rugi', $data);
         }
     }
