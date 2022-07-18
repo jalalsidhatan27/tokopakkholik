@@ -28,14 +28,13 @@
                 <select class="form-control" name="tahun">
                     <option>Pilih Tahun</option>
                     <?php for ($i = 2016; $i < 2025; $i++) {
-						# code...
-					?>
-                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        # code...
+                    ?>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                     <?php } ?>
                 </select>
             </div>
-            <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>"
-                value="<?php echo $this->security->get_csrf_hash(); ?>">
+            <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
 
             <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> Filter</button>
             <a class="btn btn-success" href="#" onclick="$('#p_neraca').printThis()"><i class="fa fa-print"></i>
@@ -69,81 +68,81 @@
                             <td></td>
                         </tr>
                         <?php
-						$t_al = 0;
-						foreach ($akt_lancar as $al) {
-							$t_al += $al->saldo;
-						?>
-                        <tr>
-                            <td><?= $al->nama_perkiraan; ?></td>
-                            <td>Rp <?= number_format($al->saldo, 0, ".", "."); ?></td>
-                            <td></td>
+                        $t_al = 0;
+                        foreach ($akt_lancar as $al) {
+                            $t_al += $al->saldo;
+                        ?>
+                            <tr>
+                                <td><?= $al->nama_perkiraan; ?></td>
+                                <td>Rp <?= number_format($al->saldo, 0, ".", "."); ?></td>
+                                <td></td>
                             <?php
-						} ?>
-                        </tr>
+                        } ?>
+                            </tr>
 
-                        <!--AKTIVA LANCAR-->
-                        <tr>
-                            <td><strong>Total Aktiva Lancar</strong></td>
-                            <td></td>
-                            <td>Rp <?= number_format($t_al, 0, ".", "."); ?></td>
-                        </tr>
+                            <!--AKTIVA LANCAR-->
+                            <tr>
+                                <td><strong>Total Aktiva Lancar</strong></td>
+                                <td></td>
+                                <td>Rp <?= number_format($t_al, 0, ".", "."); ?></td>
+                            </tr>
 
-                        <tr>
-                            <td><strong>Aktiva Tetap</strong></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <?php
-							$t_at = 0;
-							foreach ($akt_tetap as $at) {
-								$t_at += $at->saldo;
-							?>
-                        <tr>
+                            <tr>
+                                <td><strong>Aktiva Tetap</strong></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
                             <?php
-									if ($at->nama_perkiraan == 'Inventaris') { ?>
-                            <td><?= $at->nama_perkiraan; ?></td>
-                            <td>Rp <?= number_format($at->saldo, 0, ".", "."); ?></td>
-                            <td></td>
+                            $t_at = 0;
+                            foreach ($akt_tetap as $at) {
+                                $t_at += $at->saldo;
+                            ?>
+                                <tr>
+                                    <?php
+                                    if ($at->nama_perkiraan == 'Inventaris') { ?>
+                                        <td><?= $at->nama_perkiraan; ?></td>
+                                        <td>Rp <?= number_format($at->saldo, 0, ".", "."); ?></td>
+                                        <td></td>
 
-                        <tr>
-                            <td>Akum.Peny.Inventaris</td>
-                            <td>Rp (<?= number_format($akm_inv->kredit, 0, ".", "."); ?>)</td>
-                            <td></td>
-                            <?php } elseif ($at->nama_perkiraan == 'Kendaraan') { ?>
+                                <tr>
+                                    <td>Akum.Peny.Inventaris</td>
+                                    <td>Rp (<?= number_format($akm_inv->kredit, 0, ".", "."); ?>)</td>
+                                    <td></td>
+                                <?php } elseif ($at->nama_perkiraan == 'Kendaraan') { ?>
 
-                            <td><?= $at->nama_perkiraan; ?></td>
-                            <td>Rp <?= number_format($at->saldo, 0, ".", "."); ?></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>Akum.Peny.Kendaraan</td>
-                            <td>Rp (<?= number_format($akm_kend->kredit, 0, ".", "."); ?>)</td>
-                            <td></td>
+                                    <td><?= $at->nama_perkiraan; ?></td>
+                                    <td>Rp <?= number_format($at->saldo, 0, ".", "."); ?></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Akum.Peny.Kendaraan</td>
+                                    <td>Rp (<?= number_format($akm_kend->kredit, 0, ".", "."); ?>)</td>
+                                    <td></td>
                             <?php }
-								} ?>
-                        </tr>
-                        </tr>
+                                } ?>
+                                </tr>
+                                </tr>
 
-                        <tr>
-                            <td><strong>Total Aktiva Tetap</strong></td>
-                            <td></td>
-                            <td>Rp
-                                <?php
-										$t_at_2 = $t_at - ($akm_inv->kredit + $akm_kend->kredit);
-										echo number_format($t_at_2, 0, ".", ".");
-										?>
-                            </td>
-                        </tr>
+                                <tr>
+                                    <td><strong>Total Aktiva Tetap</strong></td>
+                                    <td></td>
+                                    <td>Rp
+                                        <?php
+                                        $t_at_2 = $t_at - ($akm_inv->kredit + $akm_kend->kredit);
+                                        echo number_format($t_at_2, 0, ".", ".");
+                                        ?>
+                                    </td>
+                                </tr>
 
-                        <tr>
-                            <td><strong>Total Aktiva</strong></td>
-                            <td></td>
-                            <td>Rp
-                                <?php
-										echo number_format($t_at_2 + $t_al, 0, ".", ".");
-										?>
-                            </td>
-                        </tr>
+                                <tr>
+                                    <td><strong>Total Aktiva</strong></td>
+                                    <td></td>
+                                    <td>Rp
+                                        <?php
+                                        echo number_format($t_at_2 + $t_al, 0, ".", ".");
+                                        ?>
+                                    </td>
+                                </tr>
 
                     </tbody>
                 </table>
@@ -167,72 +166,72 @@
                             <td></td>
                         </tr>
                         <?php
-						$t_pa = 0;
-						foreach ($pasiva as $p) {
-							$t_pa += $p->saldo;
-						?>
-                        <tr>
-                            <td><?= $p->nama_perkiraan; ?></td>
-                            <td>Rp
-                                <?php
-									echo number_format($p->saldo, 0, ".", ".");
-									?></td>
-                            <td></td>
+                        $t_pa = 0;
+                        foreach ($pasiva as $p) {
+                            $t_pa += $p->saldo;
+                        ?>
+                            <tr>
+                                <td><?= $p->nama_perkiraan; ?></td>
+                                <td>Rp
+                                    <?php
+                                    echo number_format($p->saldo, 0, ".", ".");
+                                    ?></td>
+                                <td></td>
                             <?php
-						} ?>
-                        </tr>
+                        } ?>
+                            </tr>
 
-                        <!--AKTIVA LANCAR-->
-                        <tr>
-                            <td><strong>Total Pasiva</strong></td>
-                            <td></td>
-                            <td>Rp <?= number_format($t_pa, 0, ".", "."); ?></td>
-                        </tr>
+                            <!--AKTIVA LANCAR-->
+                            <tr>
+                                <td><strong>Total Pasiva</strong></td>
+                                <td></td>
+                                <td>Rp <?= number_format($t_pa, 0, ".", "."); ?></td>
+                            </tr>
 
-                        <tr>
-                            <td><strong>Modal</strong></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                            <tr>
+                                <td><strong>Modal</strong></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
 
-                        <tr>
-                            <td>Modal Owner</td>
-                            <td>Rp <?= number_format($g_modal['kredit'], 0, ".", "."); ?></td>
-                            <td></td>
-                        </tr>
+                            <tr>
+                                <td>Modal Owner</td>
+                                <td>Rp <?= number_format($g_modal['kredit'], 0, ".", "."); ?></td>
+                                <td></td>
+                            </tr>
 
-                        <tr>
-                            <td>Laba Bersih</td>
-                            <td>Rp <?= number_format($laba_bersih, 0, ".", "."); ?></td>
-                            <td></td>
-                        </tr>
+                            <tr>
+                                <td>Laba Bersih</td>
+                                <td>Rp <?= number_format($laba_bersih, 0, ".", "."); ?></td>
+                                <td></td>
+                            </tr>
 
-                        <tr>
-                            <td>Prive</td>
-                            <td>Rp <?= number_format($prive['saldo'], 0, ".", "."); ?></td>
-                            <td></td>
-                        </tr>
+                            <tr>
+                                <td>Prive</td>
+                                <td>Rp <?= number_format($prive['saldo'], 0, ".", "."); ?></td>
+                                <td></td>
+                            </tr>
 
-                        <tr>
-                            <td><strong>Total Modal</strong></td>
-                            <td></td>
-                            <td>Rp
-                                <?php
-									$t_modal = $g_modal['kredit'] + ($laba_bersih - $prive['saldo']);
-									echo number_format($t_modal, 0, ".", ".");
-									?>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><strong>Total Modal</strong></td>
+                                <td></td>
+                                <td>Rp
+                                    <?php
+                                    $t_modal = $g_modal['kredit'] + ($laba_bersih - $prive['saldo']);
+                                    echo number_format($t_modal, 0, ".", ".");
+                                    ?>
+                                </td>
+                            </tr>
 
-                        <tr>
-                            <td><strong>Total Pasiva</strong></td>
-                            <td></td>
-                            <td>Rp
-                                <?php
-									echo number_format($t_modal + $t_pa, 0, ".", ".");
-									?>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><strong>Total Pasiva</strong></td>
+                                <td></td>
+                                <td>Rp
+                                    <?php
+                                    echo number_format($t_modal + $t_pa, 0, ".", ".");
+                                    ?>
+                                </td>
+                            </tr>
 
                     </tbody>
                 </table>

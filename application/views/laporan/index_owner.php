@@ -11,8 +11,7 @@
                 <div class="form-group">
                     <label for="tanggal">Tanggal Pembelian</label>
                     <div class="input-group">
-                        <input value="<?= set_value('tanggal'); ?>" type="text" id="tanggal" name="tanggal"
-                            class="form-control" placeholder="Tanggal Pembelian...">
+                        <input value="<?= set_value('tanggal'); ?>" type="text" id="tanggal" name="tanggal" class="form-control" placeholder="Tanggal Pembelian...">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <i class="fa fa-fw fa-calendar"></i>

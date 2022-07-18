@@ -65,9 +65,10 @@ class PembelianModel extends CI_Model
     public function getLaporanPembelian($tgl1, $tgl2)
     {
         $this->db->join('user u', 'u.idUser=p.idUser');
+        $this->db->join('transaksi t', 't.idUser=p.idUser');
         if ($tgl1 != null && $tgl2 != null) {
-            $this->db->where('tanggal' . ' >=', $tgl1);
-            $this->db->where('tanggal' . ' <=', $tgl2);
+            $this->db->where('p.tanggal' . ' >=', $tgl1);
+            $this->db->where('p.tanggal' . ' <=', $tgl2);
         }
         return $this->db->get('pembelian p')->result();
     }

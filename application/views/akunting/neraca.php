@@ -30,12 +30,11 @@
                     <?php for ($i = 2017; $i < 2025; $i++) {
                         # code...
                     ?>
-                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                     <?php } ?>
                 </select>
             </div>
-            <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>"
-                value="<?php echo $this->security->get_csrf_hash(); ?>">
+            <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
 
             <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> Filter</button>
             <a class="btn btn-success" href="#"><i class="fa fa-print"></i> Print</a>
@@ -44,11 +43,7 @@
 
 
         <br><br>
-        <div class="center judul">
-            DR. AKI <br>
-            NERACA <br>
-            PER <?php echo date('M Y'); ?>
-        </div>
+
         <br>
     </div>
 </div>

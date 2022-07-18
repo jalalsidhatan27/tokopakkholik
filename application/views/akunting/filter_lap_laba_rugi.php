@@ -5,12 +5,12 @@
         </h1>
     </div><!-- /.page-header -->
     <div class="row">
-        <form method="post" action="<?php echo base_url(); ?>akunting/filter_lap_laba_rugi">
+        <form method="post" action="<?php echo base_url(); ?>akunting/filter_lap_laba_rugi" enctype="multipart/form-data">
             <div class="row ">
                 <div class="form-grup">
                     <div class="col-xs-12">
                         <select class="form-control" name="bulan">
-                            <option value="*">Pilih Bulan</option>
+                            <option value="">Pilih Bulan</option>
                             <option value="01">Januari</option>
                             <option value="02">Februari</option>
                             <option value="03">Maret</option>
@@ -29,18 +29,19 @@
                 <div class="form-grup">
                     <div class="col-xs-12">
                         <select class="form-control" name="tahun">
-                            <option>Pilih Tahun</option>
+                            <option value="">Pilih Tahun</option>
                             <?php for ($i = 2019; $i < 2028; $i++) {
                                 # code...
                             ?>
-                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                             <?php } ?>
                         </select>
                     </div>
                 </div>
                 <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> Filter</button>
-                <a class="btn btn-success" href="<?php echo base_url(); ?>akunting/labarugi_print"><i
-                        class="fa fa-print"></i> Print</a>
+                <a class="btn btn-success" href="<?php echo base_url(); ?>akunting/labarugi_print"><i class="fa fa-print"></i> Print
+                </a>
+            </div>
         </form>
     </div>
 </div>

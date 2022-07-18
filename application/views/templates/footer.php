@@ -16,8 +16,7 @@
                 ?>
                 <div class="form-group">
                     <label>Tanggal</label>
-                    <input type="date" class="form-control" name="tanggal" data-field="date" required="true"
-                        data-format="dd-MM-yyyy" />
+                    <input type="date" class="form-control" name="tanggal" data-field="date" required="true" data-format="dd-MM-yyyy" />
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -49,8 +48,7 @@
                 ?>
                 <div class="form-group">
                     <label>Tanggal</label>
-                    <input type="date" class="form-control" name="tanggal" data-field="date" required="true"
-                        data-format="dd-MM-yyyy" />
+                    <input type="date" class="form-control" name="tanggal" data-field="date" required="true" data-format="dd-MM-yyyy" />
                 </div>
                 <div class="form-group">
                     <label>Kas</label>
@@ -153,92 +151,92 @@
 <?= $this->session->flashdata('pesan'); ?>
 
 <script type="text/javascript">
-$(function() {
-    $('.custom-file-input').on('change', function() {
-        let fileName = $(this).val().split('\\').pop();
-        $(this).next('.custom-file-label').addClass('selected').html(fileName);
+    $(function() {
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass('selected').html(fileName);
+        });
+
+        // Date rang
+
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('#tangal').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+        }
+
+        $('#tanggal').daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: {
+                'Hari ini': [moment(), moment()],
+                'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                '7 hari terakhir': [moment().subtract(6, 'days'), moment()],
+                '30 hari terakhir': [moment().subtract(29, 'days'), moment()],
+                'Bulan ini': [moment().startOf('month'), moment().endOf('month')],
+                'Bulan lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month')
+                    .endOf('month')
+                ],
+                'Tahun ini': [moment().startOf('year'), moment().endOf('year')],
+                'Tahun lalu': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year')
+                    .endOf('year')
+                ]
+            }
+        }, cb);
+
+        cb(start, end);
+
+        // Bootstrap
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#search-only-datatable').DataTable({
+            dom: "<'row'<'col-md-4 col-lg-2'f><'col-md-4'><'col-md-4 col-lg-6 text-center'p>>" +
+                "<'row mt-2'<'col-md-12 overflow-y h-25'tr>>",
+            ordering: false,
+            info: false,
+        });
+
+        var table = $('.datatable').DataTable({
+            buttons: ['copy', 'csv', 'print', 'excel'],
+            dom: "<'row px-2 px-md-4 pt-2'<'col-md-3'l><'col-md-5 text-center'B><'col-md-4'f>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row px-2 px-md-4 py-3'<'col-md-5'i><'col-md-7'p>>",
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            columnDefs: [{
+                targets: -1,
+                orderable: false,
+                searchable: false
+            }]
+        });
+
+        table.buttons().container().appendTo('#dataTable_wrapper .col-md-5:eq(0)');
     });
 
-    // Date rang
-
-    var start = moment().subtract(29, 'days');
-    var end = moment();
-
-    function cb(start, end) {
-        $('#tangal').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+    function h_modal() {
+        var kas = $('#n_kas').val();
+        var inv = $('#n_inv').val();
+        var pers = $('#n_pers').val();
+        var perl = $('#n_perl').val();
+        var kend = $('#n_kend').val();
+        var total = parseInt(kas) + parseInt(inv) + parseInt(pers) + parseInt(perl) + parseInt(kend);
+        $('#n_total').val(convertToRupiah(total));
     }
 
-    $('#tanggal').daterangepicker({
-        startDate: start,
-        endDate: end,
-        ranges: {
-            'Hari ini': [moment(), moment()],
-            'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            '7 hari terakhir': [moment().subtract(6, 'days'), moment()],
-            '30 hari terakhir': [moment().subtract(29, 'days'), moment()],
-            'Bulan ini': [moment().startOf('month'), moment().endOf('month')],
-            'Bulan lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month')
-                .endOf('month')
-            ],
-            'Tahun ini': [moment().startOf('year'), moment().endOf('year')],
-            'Tahun lalu': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year')
-                .endOf('year')
-            ]
-        }
-    }, cb);
+    function convertToRupiah(angka) {
 
-    cb(start, end);
+        var rupiah = '';
+        var angkarev = angka.toString().split('').reverse().join('');
 
-    // Bootstrap
-    $('[data-toggle="tooltip"]').tooltip();
+        for (var i = 0; i < angkarev.length; i++)
+            if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
 
-    $('#search-only-datatable').DataTable({
-        dom: "<'row'<'col-md-4 col-lg-2'f><'col-md-4'><'col-md-4 col-lg-6 text-center'p>>" +
-            "<'row mt-2'<'col-md-12 overflow-y h-25'tr>>",
-        ordering: false,
-        info: false,
-    });
+        return rupiah.split('', rupiah.length - 1).reverse().join('');
 
-    var table = $('.datatable').DataTable({
-        buttons: ['copy', 'csv', 'print', 'excel'],
-        dom: "<'row px-2 px-md-4 pt-2'<'col-md-3'l><'col-md-5 text-center'B><'col-md-4'f>>" +
-            "<'row'<'col-md-12'tr>>" +
-            "<'row px-2 px-md-4 py-3'<'col-md-5'i><'col-md-7'p>>",
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
-        ],
-        columnDefs: [{
-            targets: -1,
-            orderable: false,
-            searchable: false
-        }]
-    });
-
-    table.buttons().container().appendTo('#dataTable_wrapper .col-md-5:eq(0)');
-});
-
-function h_modal() {
-    var kas = $('#n_kas').val();
-    var inv = $('#n_inv').val();
-    var pers = $('#n_pers').val();
-    var perl = $('#n_perl').val();
-    var kend = $('#n_kend').val();
-    var total = parseInt(kas) + parseInt(inv) + parseInt(pers) + parseInt(perl) + parseInt(kend);
-    $('#n_total').val(convertToRupiah(total));
-}
-
-function convertToRupiah(angka) {
-
-    var rupiah = '';
-    var angkarev = angka.toString().split('').reverse().join('');
-
-    for (var i = 0; i < angkarev.length; i++)
-        if (i % 3 == 0) rupiah += angkarev.substr(i, 3) + '.';
-
-    return rupiah.split('', rupiah.length - 1).reverse().join('');
-
-}
+    }
 </script>
 </body>
 

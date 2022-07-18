@@ -125,10 +125,10 @@ class M_akunting extends CI_Model
 	{ //get
 		$this->db->select('debet,kredit');
 		$this->db->from('jurnal_umum');
-		$this->db->where('nama_perkiraan', 'Persediaan Barang');
-		$this->db->or_where('nama_perkiraan', 'Beban Persediaan');
 		$this->db->where('date_format(tanggal,"%m")', $bln);
 		$this->db->where('date_format(tanggal,"%Y")', $thn);
+		$this->db->where('nama_perkiraan', 'Persediaan Barang');
+		$this->db->or_where('nama_perkiraan', 'Beban Persediaan');
 		$query = $this->db->get();
 		return $query;
 	}
@@ -137,9 +137,9 @@ class M_akunting extends CI_Model
 	{
 		$this->db->select('debet');
 		$this->db->from('jurnal_umum');
-		$this->db->where('nama_perkiraan', 'Persediaan Barang');
 		$this->db->where('date_format(tanggal,"%m")', $bln);
 		$this->db->where('date_format(tanggal,"%Y")', $thn);
+		$this->db->where('nama_perkiraan', 'Persediaan Barang');
 		return $this->db->get();
 	}
 

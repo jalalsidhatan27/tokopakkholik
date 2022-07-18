@@ -395,7 +395,7 @@ class Akunting extends CI_Controller
         $thn = $this->input->post('tahun', TRUE);
 
         $g_persediaan     = $this->m_akunting->g_persediaan($bln, $thn)->num_rows();
-        $pers_awal        = $this->m_akunting->c_pers_awal($bln, $thn, 'jurnal_umum')->num_rows();
+        $pers_awal        = $this->m_akunting->c_pers_awal($bln, $thn)->num_rows();
         if ($g_persediaan == $pers_awal or $pers_awal == 0) { //mencari apakah sudah melakukan stok persediaan akhir
             $data = array(
                 // 'content' => 'Isi Persediaan Awal / Akhir terlebih dahulu',
@@ -412,8 +412,11 @@ class Akunting extends CI_Controller
                 'title'        => "Laporan Laba rugi",
             );
 
-            print_r($data);
-            die;
+            // echo "<pre>";
+            // print_r($data);
+            // print_r($g_persediaan_ra);
+            // die;
+            // echo "</pre>";
             template_view('akunting/lap_laba_rugi', $data);
         }
     }
@@ -579,7 +582,7 @@ class Akunting extends CI_Controller
     public function tampil_neraca($bln, $thn)
     {
         $data = array(
-            'title' => 'Neracaaaa',
+            'title' => 'Neraca',
             // 'sidebar'        => "Akunting",
             // 'sidebar2'        => "Reference",
             // 'menu'            => "active open",

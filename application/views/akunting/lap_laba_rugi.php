@@ -30,7 +30,7 @@
                     <?php for ($i = 2017; $i < 2025; $i++) {
                         # code...
                     ?>
-                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                        <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -91,16 +91,16 @@
                 </tr>
                 <?php
                 $total = 0;
-                foreach ($get_rugilaba as $g) {
+                foreach ($get_labarugi as $g) {
                     $total += $g->akun;
                 ?>
-                <tr>
-                    <td>
-                        <h4><?php echo $g->nama_perkiraan; ?></h4>
-                    </td>
-                    <td>Rp <?php echo number_format($g->akun, 0, ".", "."); ?></td>
-                    <td></td>
-                </tr>
+                    <tr>
+                        <td>
+                            <h4><?php echo $g->nama_perkiraan; ?></h4>
+                        </td>
+                        <td>Rp <?php echo number_format($g->akun, 0, ".", "."); ?></td>
+                        <td></td>
+                    </tr>
                 <?php } ?>
                 <tr>
                     <td>
